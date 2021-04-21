@@ -1,11 +1,11 @@
 import requests, json
 import time
 from api import appid
-solar_radiation = [1]*8
+solar_radiation = [0]*8
 slots = [1,1,1,1,1,1,1,1]
-ports_status =[[1]*5]*8
+ports_status =[[1]*3]*8
 table = []
-past_hours=0
+
 
 for i in range(8):
     if i < 3:
@@ -21,11 +21,11 @@ def checkSlots():
     # Check current time
     t = time.localtime()
     current_hour = int(time.strftime("%H", t))
+    past_hours=0
     if current_hour>9:
         past_hours = current_hour-9
     for i in range(past_hours):
         slots[i] = 0
-    print(slots)
 
     # # API
     lat = 10.7589
@@ -36,10 +36,10 @@ def checkSlots():
     r = requests.get(endpoint)
     r = json.loads(r.content)
     for i in range(past_hours,8):
-        if r["hourly"][i]["clouds"] > 50:
-            solar_radiation[i] = 0
+        if r["hourly"][i]["clouds"] < 50:
+            solar_radiation[i] = 1
         print( r["hourly"][i]["clouds"])
-    print(solar_radiation)
+    # print(solar_radiation)
 
     for i in range(len(solar_radiation)):
         # Solar Available and Slots Free
@@ -73,7 +73,7 @@ def bookSlots(id):
     for num in ports_status[id]:
         if num == 1:
             return()
-    # Updare slots if no port is available
+    # Update slots if no port is available
     slots[id] = 0
     print(slots)
     return()

@@ -40,8 +40,6 @@
     <div class="container d-flex align-items-center">
 
       <h1 class="logo mr-auto"><a href="index.html">Arsha</a></h1>
-      <!-- Uncomment below if you prefer to use an image logo -->
-      <!-- <a href="index.html" class="logo mr-auto"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
 
       <nav class="nav-menu d-none d-lg-block">
         <ul>
@@ -59,9 +57,25 @@
   </header><!-- End Header -->
 
   <main id="main">
+    {% if section %}
+    <section class="{{section}}">
+    {% else %}
+    <section>
+    {% endif %}
 
-    {% block content %}{% endblock %}
-  </main><!-- End #main -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <div class="alert alert-{{category}} mt-2">
+        {{message}}
+      </div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </section>    
+  </main>
+  <!-- End #main -->
 
   <!-- ======= Footer ======= -->
   <footer id="footer">

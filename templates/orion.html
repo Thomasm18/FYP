@@ -1,52 +1,48 @@
 {% extends "layout2.html" %}
 {%  block content %}
 <script type="text/javascript" src="{{url_for('static', filename='js/script.js')}}"></script>
-<section id="portfolio" class="portfolio">
-  <div class="container my-2" data-aos="fade-up">
-   <div class="section-title pt-5">
-    <h2>Timing</h2>
-    <p>Pick a convinient time to charge your EV</p>
-  </div>
-
-  <ul id="portfolio-flters" class="d-flex justify-content-center" data-aos="fade-up" data-aos-delay="100">
-    <li data-filter="*" class="filter-active">Fast Charging</li>
-    <li data-filter=".filter-NITT">Normal Charging</li>
-  </ul>
-
-  <div class="row px-5" id="TimeSlots">
-    <table id="TimeTable" class="table table-hover">
-      <thead>
-        <tr>
-          <th scope="col">Time</th>
-          <th scope="col">Cost</th>
-          <th scope="col">Saving</th>
-          <th scope="col">Book</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for row in table %}
-          {% if row.available %}
-        <tr>
-          <td>{{ row.time }}</td>
-          <td>{{ row.cost }}</td>
-          <td>{{ row.saving }}</td>
-          <td><button type="button" class="btn btn-success" id="{{row.id}}">Book</button></td>
-        </tr> 
-          {% else %}
-        <tr class="table-secondary">
-          <td>{{ row.time }}</td>
-          <td>{{ row.cost }}</td>
-          <td>{{ row.saving }}</td>
-          <td></td>
-        </tr> 
-          {% endif %}
-
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+<div class="container my-2" data-aos="fade-up">
+ <div class="section-title pt-5">
+  <h2>Timing</h2>
+  <p>Pick a convinient time to charge your EV</p>
 </div>
-</section>
 
+<ul id="portfolio-flters" class="d-flex justify-content-center" data-aos="fade-up" data-aos-delay="100">
+  <li data-filter="*" class="filter-active">Fast Charging</li>
+  <li data-filter=".filter-NITT">Normal Charging</li>
+</ul>
+
+<div class="row px-5" id="TimeSlots">
+  <table id="TimeTable" class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Time</th>
+        <th scope="col">Cost</th>
+        <th scope="col">Saving</th>
+        <th scope="col">Book</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in table %}
+      {% if row.available %}
+      <tr>
+        <td>{{ row.time }}</td>
+        <td>{{ row.cost }}</td>
+        <td>{{ row.saving }}</td>
+        <td><button type="button" class="btn btn-success" id="{{row.id}}">Book</button></td>
+      </tr> 
+      {% else %}
+      <tr class="table-secondary">
+        <td>{{ row.time }}</td>
+        <td>{{ row.cost }}</td>
+        <td>{{ row.saving }}</td>
+        <td></td>
+      </tr> 
+      {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+</div>
 <!-- End Timing Section -->      
 {%  endblock content %}
