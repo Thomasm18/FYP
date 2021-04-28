@@ -1,0 +1,60 @@
+{% extends "layout2.html" %}
+{%  block content %}
+<div class="container my-2" data-aos="fade-up">
+ <div class="section-title pt-5">
+  <h2>Booking</h2>
+  <p>Choose a Location and pick a time, it's that simple!</p>
+</div>
+
+<ul id="portfolio-flters" class="d-flex justify-content-center" data-aos="fade-up" data-aos-delay="100">
+  <li data-filter="*" class="filter-active">All</li>
+  <li data-filter=".filter-NITT">NITT</li>
+</ul>
+
+<div class="row portfolio-container" data-aos="fade-up" data-aos-delay="200">
+
+  <div class="col-lg-4 col-md-6 portfolio-item filter-NITT">
+    <div class="portfolio-img">
+      <a href="{{url_for('timing')}}">
+        <img src="static/img/locations/admin.jpg" class="img-fluid" alt=""></div>
+      </a>
+      <div class="portfolio-info">
+        <h4>Admin</h4>
+        <p>Administration Block</p>
+        <a href="static/img/locations/admin.jpg" data-gall="portfolioGallery" class="venobox preview-link" title="Admin Building"><i class="bx bx-plus"></i></a>
+        <a href="https://goo.gl/maps/3P6nMAsYpaCr5ABv9" class="details-link" title="Directions"><i class="bx bx-right-top-arrow-circle"></i></a>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-md-6 portfolio-item filter-NITT">
+      <div class="portfolio-img">
+        <a href="{{url_for('timing')}}">
+          <img src="static/img/locations/capstone.jpg" class="img-fluid" alt=""></div>
+        </a>
+        <div class="portfolio-info">
+          <h4>Capstone</h4>
+          <p>Training & Placement</p>
+          <a href="static/img/locations/capstone.jpg" data-gall="portfolioGallery" class="venobox preview-link" title="Capstone"><i class="bx bx-plus"></i></a>
+          <a href="https://goo.gl/maps/q6hrVCwzcDBCEbHV7" class="details-link" title="More Details"><i class="bx bx-right-top-arrow-circle"></i></a>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6 portfolio-item filter-NITT">
+        <div class="portfolio-img">
+         <a href="{{url_for('timing')}}">
+          <img src="static/img/locations/orion.jpg" class="img-fluid" alt="">
+        </a>
+      </div>
+      <div class="portfolio-info">
+        <h4>Orion</h4>
+        <p>Lecture Hall</p>
+        <a href="static/img/locations/orion.jpg" data-gall="portfolioGallery" class="venobox preview-link" title="Orion"><i class="bx bx-plus"></i></a>
+        <a href="https://goo.gl/maps/xvEdvWd5suZpy1Ec6" class="details-link" title="Directions"><i class="bx bx-right-top-arrow-circle"></i></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Portfolio Section -->
+
+
+{%  endblock content %}
