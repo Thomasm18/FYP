@@ -1,0 +1,11 @@
+If Database is deleted:
+1) Run Python in folder location
+Run Code:
+2) from server import db
+3) db.create_all()
+
+To Delete values in a Table:
+1)Run Python in folder location
+Run Code:
+2)db.session.query(Model).delete()
+3)db.session.commit()

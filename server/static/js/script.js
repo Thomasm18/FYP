@@ -5,7 +5,7 @@ $(document).ready(function(){
 			id : slotID,
 		}, function(data) {
 			alert("Slot Booked");
-			window.location.replace("/");						
+			window.location.replace("/timing");						
 		}).fail(function (jqXHR, exception) {
 			failError(jqXHR, exception)
 		});

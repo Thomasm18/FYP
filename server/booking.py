@@ -1,14 +1,18 @@
 import requests, json
 import time
-from datetime import datetime
+import datetime
+from server import db
 from server.api import appid
+from server.models import User, Booking
+from sqlalchemy import and_
+from flask_login import current_user
+
 solar_radiation = [0]*8
 slots = [1,1,1,1,1,1,1,1]
 ports_status =[[1]*3]*8
 table = []
-tStart = 0
-tStop = 8
-past_hours = 0
+booking_date = datetime.date.today()
+
 
 #Create Dictionary TimeTable
 for i in range(8):
@@ -26,9 +30,16 @@ def checkSlots():
     # Check current time
     t = time.localtime()
     current_hour = int(time.strftime("%H", t))
-    past_hours = 0 if current_hour < 9 or current_hour>16 else current_hour-9   
+
+    # To Grey out slots that have past
+    past_hours = 0 if current_hour < 9 or current_hour>16 else current_hour-9
     for i in range(past_hours):
         slots[i] = 0
+
+    # Change date to tomorrow
+    if current_hour >16:
+        global booking_date 
+        booking_date = datetime.date.today() + datetime.timedelta(days = 1)
 
     # API
     lat = 10.7589
@@ -41,12 +52,12 @@ def checkSlots():
     timezone_offset = r["timezone_offset"]
 
     for i in range(25):
-        t = int(datetime.utcfromtimestamp(r["hourly"][i]["dt"] - timezone_offset).strftime('%H'))
-        if (t>=9 and t<=16) and past_hours <=8:
+        t = int(datetime.datetime.utcfromtimestamp(r["hourly"][i]["dt"] - timezone_offset).strftime('%H'))
+        if (t>=9 and t<=16) and past_hours <8:
             if r["hourly"][i]["clouds"] < 50:
                 solar_radiation[past_hours] = 1
             past_hours += 1
-            print("Time: " + str(t))
+            print("Time: " + str(t) + ":00")
             print("Cloud Cover: " + str(r["hourly"][i]["clouds"]))
 
     for i in range(len(solar_radiation)):
@@ -71,15 +82,14 @@ def checkSlots():
 
 
 def bookSlots(id):
+    booking_time = str(id+9)
+    booking = Booking(time = booking_time, user_id=current_user.id, date=booking_date)
+    db.session.add(booking)
+    db.session.commit()
+    print("Slot Booked on " + str(booking_date) + " for " + booking_time + ":00")
+
     # Update Port Status
-    for i in range(len(ports_status[id])):
-        if ports_status[id][i] == 1:
-            ports_status[id][i] = 0
-            break
-    # Check is any port is still available
-    for num in ports_status[id]:
-        if num == 1:
-            return()
-    # Update slots if no port is available
-    slots[id] = 0
+    ports_status = Booking.query.filter(and_(Booking.date == booking_date),(Booking.time == booking_time)).all()
+    if len(ports_status) >= 3:
+        slots[id] = 0
     return()
