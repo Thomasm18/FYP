@@ -11,9 +11,15 @@ from flask_login import login_user, current_user, logout_user, login_required
 def home():
     return render_template('index.html', main='True')
 
+@app.route('/timing')
+@login_required
+def timing():
+    table = checkSlots()
+    return render_template('timing.html', table=table, section='portfolio')
+
 @app.route('/booking')
 def book():
-    return render_template('book.html', section='portfolio')
+    return render_template('location.html', section='portfolio')
 
 @app.route('/register', methods=['GET','POST'])
 def register():
@@ -49,12 +55,6 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('home'))
-
-@app.route('/timing')
-@login_required
-def timing():
-    table = checkSlots()
-    return render_template('orion.html', table=table, section='portfolio')
 
 
 @app.route('/_bookTime')

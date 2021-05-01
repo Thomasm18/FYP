@@ -1,0 +1,74 @@
+{% extends "layout2.html" %}
+{%  block content %}
+<script type="text/javascript" src="{{url_for('static', filename='js/script.js')}}"></script>
+<div class="container my-2" data-aos="fade-up">
+ <div class="section-title pt-5">
+  <h2>Timing</h2>
+  <p>Pick a convinient time to charge your EV</p>
+</div>
+
+<ul id="portfolio-flters" class="d-flex justify-content-center" data-aos="fade-up" data-aos-delay="100">
+  <li >Fast Charging</li>
+  <li class="filter-active">Normal Charging</li>
+</ul>
+
+<div class="row mx-5 px-5" id="TimeSlots">
+  <table id="TimeTable" class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Time</th>
+        <th scope="col">Cost</th>
+        <th scope="col">Saving</th>
+        <th class="" scope="col">Book</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in table %}
+      {% if row.available %}
+      <tr>
+        <td>{{ row.time }}</td>
+        <td>₹ {{ row.cost }}</td>
+        <td>₹ {{ row.saving }}</td>
+        <td><button type="button" class="btn btn-success" id="{{row.id}}">Book</button></td>
+      </tr> 
+      {% else %}
+      <tr class="table-secondary">
+        <td>{{ row.time }}</td>
+        <td>{{ row.cost }}</td>
+        <td>{{ row.saving }}</td>
+        <td></td>
+      </tr> 
+      {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="bookingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Charging Capacity</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row ">
+        <div class="mx-3 my-1">
+          <h5>Max Charge: </h5>
+        </div>
+        <div class="my-1">
+          <input class="pl-2" id="BatteryCharge" data-slider-id='SliderBattery' type="text" data-slider-min="50" data-slider-max="100" data-slider-step="5" data-slider-value="80"/>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="SaveBtn">Book Slot</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Timing Section -->      
+{%  endblock content %}

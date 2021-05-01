@@ -5,7 +5,4 @@ Run Code:
 3) db.create_all()
 
 To Delete values in a Table:
-1)Run Python in folder location
-Run Code:
-2)db.session.query(Model).delete()
-3)db.session.commit()
+Run clearDB file, comment Tables not to be deleted 

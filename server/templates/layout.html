@@ -25,6 +25,7 @@
   <link href="static/vendor/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
   <link href="static/vendor/aos/aos.css" rel="stylesheet">
 
+
   <!-- Template Main CSS File -->
   <link rel="stylesheet" type="text/css" href="static\css\style.css">
 </head>
@@ -34,11 +35,11 @@
   <!-- ======= Header ======= -->
   <header id="header" class="fixed-top">
     <div class="container d-flex align-items-center">
-      <h1 class="logo mr-auto"><a href="index.html">Arsha</a></h1>
+      <h1 class="logo mr-auto"><a href="{{url_for('home')}}">Arsha</a></h1>
 
       <nav class="nav-menu d-none d-lg-block">
         <ul>
-          <li class="active"><a href="index.html">Home</a></li>
+          <li class="active"><a href="{{url_for('home')}}">Home</a></li>
           <li><a href="#about">About</a></li>
           <li><a href="#charging">Charging</a></li>
           <li><a href="#team">Team</a></li>
@@ -84,6 +85,7 @@
 <script src="static/vendor/venobox/venobox.min.js"></script>
 <script src="static/vendor/owl.carousel/owl.carousel.min.js"></script>
 <script src="static/vendor/aos/aos.js"></script>
+
 
 <!-- Template Main JS File -->
 <script src="static/js/main.js"></script>
