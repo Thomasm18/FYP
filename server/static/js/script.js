@@ -8,9 +8,11 @@ $(document).ready(function(){
 		var slotID = this.id;
 		$('#bookingModal').modal('toggle');
 		$('#SaveBtn').click(function(){
+			var batteryVal = $('#BatteryCharge').data('slider').getValue();
 			$('#bookingModal').modal('toggle');
 			$.getJSON($SCRIPT_ROOT + '/_bookTime', {
 				id : slotID,
+				chargeUntil : batteryVal
 			}, function(data) {
 				alert("Slot Booked");
 				window.location.replace("/timing");						
@@ -18,7 +20,7 @@ $(document).ready(function(){
 				failError(jqXHR, exception)
 			});
 		});
-	})	
+		})	
 	// Server Error
 	function failError(jqXHR, exception) {
 		var msg = '';

@@ -11,7 +11,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    battery = db.Column(db.Numeric, nullable=False)
+    battery = db.Column(db.Float, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     booking = db.relationship('Booking', backref='user', lazy = True)
 
@@ -22,7 +22,8 @@ class Booking(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     time = db.Column(db.String(20), nullable=False)
     date = db.Column(db.Date, nullable=False, default=date.today)
+    charge_until = db.Column(db.Integer, nullable=False, default=80)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
-        return f"User('{self.time}','{self.date}','{self.user_id}')"
+        return f"Booking('{self.time}','{self.date}','{self.charge_until}','{self.user_id}')"

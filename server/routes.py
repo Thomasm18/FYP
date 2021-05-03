@@ -11,15 +11,15 @@ from flask_login import login_user, current_user, logout_user, login_required
 def home():
     return render_template('index.html', main='True')
 
+@app.route('/location')
+def location():
+    return render_template('location.html', section='portfolio')
+
 @app.route('/timing')
 @login_required
 def timing():
     table = checkSlots()
     return render_template('timing.html', table=table, section='portfolio')
-
-@app.route('/booking')
-def book():
-    return render_template('location.html', section='portfolio')
 
 @app.route('/register', methods=['GET','POST'])
 def register():
@@ -60,5 +60,5 @@ def logout():
 @app.route('/_bookTime')
 def bookTime():
     slotId = request.args.get('id', type=int)
-    bookSlots(slotId)
-    return str(1)
+    chargeUntil = request.args.get('chargeUntil', type=int)
+    return bookSlots(slotId, chargeUntil)
