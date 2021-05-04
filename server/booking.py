@@ -45,7 +45,7 @@ def checkSlots():
     lon = 78.8132
     exclude = 'current,minutely,daily,alerts'
     units = 'metric'
-    endpoint = 'https://api.openweathermap.org/data/2.5/onecall?lat=33.441792&lon=-94.037689&exclude='+ exclude + '&units=' + units + '&appid=' + appid
+    endpoint = 'https://api.openweathermap.org/data/2.5/onecall?lat=' + str(lat) + '&lon=' + str(lon) + '&exclude='+ exclude + '&units=' + units + '&appid=' + appid
     r = requests.get(endpoint)
     r = json.loads(r.content)
     timezone_offset = r["timezone_offset"]
