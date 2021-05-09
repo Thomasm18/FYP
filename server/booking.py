@@ -45,14 +45,22 @@ def checkSlots():
     lon = 78.8132
     exclude = 'current,minutely,daily,alerts'
     units = 'metric'
-    endpoint = 'https://api.openweathermap.org/data/2.5/onecall?lat=' + str(lat) + '&lon=' + str(lon) + '&exclude='+ exclude + '&units=' + units + '&appid=' + appid
+    endpoint = 'https://api.openweathermap.org/data/2.5/onecall?' \
+    + 'lat=' + str(lat) \
+    + '&lon=' + str(lon) \
+    + '&exclude='+ exclude \
+    + '&units=' + units \
+    + '&appid=' + appid
     r = requests.get(endpoint)
     r = json.loads(r.content)
+
+
     timezone_offset = r["timezone_offset"]
 
     # Get Hourly weather information
     for i in range(25):
-        t = int(datetime.datetime.utcfromtimestamp(r["hourly"][i]["dt"] - timezone_offset).strftime('%H'))
+        t = int(datetime.datetime.utcfromtimestamp(r["hourly"][i]["dt"] + timezone_offset).strftime('%H'))
+        print(str(datetime.datetime.utcfromtimestamp(r["hourly"][i]["dt"] + timezone_offset).strftime('%H:%M')))
         if (t>=9 and t<=16) and past_hours <8:
             cloudCover[past_hours] = r["hourly"][i]["clouds"]
             past_hours += 1
@@ -84,15 +92,9 @@ def checkSlots():
 def getPowerGenerated(cloudCover):
     powerGenerated = []
     for i in range(len(cloudCover)):
-        if cloudCover[i] <= 40:
-            power = 3.5
-        elif cloudCover[i] > 40 and cloudCover[i] <= 60:
-            power = 2
-        elif cloudCover[i] > 60 and cloudCover[i] <= 80:
-            power = 1
-        else:
-            power = 0
-        powerGenerated.append(power)
+        # Formula for Power Generated based on Cloud Cover
+        power = 15*(1-.75*(cloudCover[i]/100)**3)
+        powerGenerated.append(round(power,2))
     return powerGenerated
 
 def getPowerRemaining(powerGenerated):
@@ -100,13 +102,14 @@ def getPowerRemaining(powerGenerated):
     for i in range(len(powerGenerated)):
         booking_time = str(i+9)
         bookedSlots = Booking.query.filter(and_(Booking.date == booking_date),(Booking.time == booking_time)).all()
+        # If slot has been booked before
         if bookedSlots:
             totalEnergyConsumed = 0
             for slots in bookedSlots:
                 chargeUntil = slots.charge_until
                 batteryCapacity = slots.user.battery
                 totalEnergyConsumed += batteryCapacity * chargeUntil/100
-            powerRemaining.append(max(0,powerGenerated[i]-totalEnergyConsumed))
+            powerRemaining.append(round(max(0,powerGenerated[i]-totalEnergyConsumed),2))
         else:
             powerRemaining.append(powerGenerated[i])
     return powerRemaining
@@ -115,15 +118,17 @@ def getCostArray(powerRemaining):
     costArray = []
     batteryCapacity = current_user.battery
     for i in range(len(powerRemaining)):
+        # If Sufficient power is available to charge the vehicle
         if batteryCapacity <= powerRemaining[i]:
             cost = 3.4 * batteryCapacity
         else:
             cost = 3.4 * powerRemaining[i] + 6 * (batteryCapacity - powerRemaining[i])
-        costArray.append(cost)
+        costArray.append(round(cost,2))
     return costArray 
 
 
 def bookSlots(id, chargeUntil):
+    # Add Entry into the Booking Table
     booking_time = str(id+9)
     booking = Booking(time = booking_time, date=booking_date, charge_until = chargeUntil, user_id=current_user.id, )
     db.session.add(booking)
@@ -131,6 +136,7 @@ def bookSlots(id, chargeUntil):
     print("Slot Booked on " + str(booking_date) + " for " + booking_time + ":00 till " + str(chargeUntil) + "% charge")
     # Update Port Status
     ports_status = Booking.query.filter(and_(Booking.date == booking_date),(Booking.time == booking_time)).all()
-    if len(ports_status) >= 3:
+    # If all for ports are booked, slot is full
+    if len(ports_status) >= 4:
         slots[id] = 0
     return(str(1))
