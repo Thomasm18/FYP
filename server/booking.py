@@ -8,6 +8,7 @@ from sqlalchemy import and_
 from flask_login import current_user
 
 cloudCover = [0]*8
+temp = [25]*8
 slots = [1]*8
 table = []
 booking_date = datetime.date.today()
@@ -60,14 +61,15 @@ def checkSlots():
     # Get Hourly weather information
     for i in range(25):
         t = int(datetime.datetime.utcfromtimestamp(r["hourly"][i]["dt"] + timezone_offset).strftime('%H'))
-        print(str(datetime.datetime.utcfromtimestamp(r["hourly"][i]["dt"] + timezone_offset).strftime('%H:%M')))
         if (t>=9 and t<=16) and past_hours <8:
             cloudCover[past_hours] = r["hourly"][i]["clouds"]
+            temp[past_hours] = r["hourly"][i]["temp"] 
             past_hours += 1
-            print("Time: " + str(t) + ":00")
+            print("Time: " + str(8+past_hours) + ":00")
             print("Cloud Cover: " + str(r["hourly"][i]["clouds"]))
+            print("Temperature: " + str(r["hourly"][i]["temp"]))
 
-    powerGenerated = getPowerGenerated(cloudCover)
+    powerGenerated = getPowerGenerated(cloudCover, temp, slots)
     powerAvailable = getPowerRemaining(powerGenerated)
     costArray = getCostArray(powerAvailable)
     print("Power Generated: " + str(powerGenerated))
@@ -89,12 +91,15 @@ def checkSlots():
     return(table)
 
 
-def getPowerGenerated(cloudCover):
+def getPowerGenerated(cloudCover, temp, slots):
     powerGenerated = []
     for i in range(len(cloudCover)):
-        # Formula for Power Generated based on Cloud Cover
-        power = 15*(1-.75*(cloudCover[i]/100)**3)
-        powerGenerated.append(round(power,2))
+        if slots[i] != 0:
+            # Formula for Power Generated based on Cloud Cover and Temperature
+            power = 15*(1-(.4/100)*(temp[i]-25))-(5.625/100)*(cloudCover[i])
+            powerGenerated.append(round(power,2))
+        else:
+            powerGenerated.append(0)
     return powerGenerated
 
 def getPowerRemaining(powerGenerated):
