@@ -22,7 +22,7 @@ for i in range(8):
         t = "12 PM"
     else:
         t = str(i-3) + " PM"
-    table.append({'id':i,'time':t, 'cost': 0, 'saving':0, 'available':True})
+    table.append({'id':i,'time':t, 'cost': 0, 'saving':0, 'available':True, 'minCost':False})
 
 
 #Get Slots and Cost
@@ -72,6 +72,7 @@ def checkSlots():
     powerGenerated = getPowerGenerated(cloudCover, temp, slots)
     powerAvailable = getPowerRemaining(powerGenerated)
     costArray = getCostArray(powerAvailable)
+    minCost = min(costArray)
     print("Power Generated: " + str(powerGenerated))
     print("Power Available: " + str(powerAvailable))
     print("Cost: " + str(costArray))
@@ -84,9 +85,15 @@ def checkSlots():
             table[i]['cost'] = 'N/A'
             table[i]['saving'] = 'N/A'
 
+        elif costArray[i] == minCost:
+            table[i]['available'] = True 
+            table[i]['cost']= costArray[i]
+            table[i]['saving'] = round((current_user.battery*6.6) - costArray[i],2)
+            table[i]['minCost']= True
+
         else:
             table[i]['available'] = True 
-            table[i]['cost']= round(costArray[i],2)
+            table[i]['cost']= costArray[i]
             table[i]['saving'] = round((current_user.battery*6.6) - costArray[i],2)
     return(table)
 
@@ -96,7 +103,7 @@ def getPowerGenerated(cloudCover, temp, slots):
     for i in range(len(cloudCover)):
         if slots[i] != 0:
             # Formula for Power Generated based on Cloud Cover and Temperature
-            power = 15*(1-(.4/100)*(temp[i]-25))-(5.625/100)*(cloudCover[i])
+            power = 15*(1-(.4/100)*(temp[i]-25))-(5.625/100)*(cloudCover[i]) - 9.9 
             powerGenerated.append(round(power,2))
         else:
             powerGenerated.append(0)
@@ -113,7 +120,7 @@ def getPowerRemaining(powerGenerated):
             for slots in bookedSlots:
                 chargeUntil = slots.charge_until
                 batteryCapacity = slots.user.battery
-                totalEnergyConsumed += batteryCapacity * chargeUntil/100
+                totalEnergyConsumed += min(batteryCapacity * chargeUntil/100,3.3)
             powerRemaining.append(round(max(0,powerGenerated[i]-totalEnergyConsumed),2))
         else:
             powerRemaining.append(powerGenerated[i])
@@ -121,14 +128,15 @@ def getPowerRemaining(powerGenerated):
 
 def getCostArray(powerRemaining):
     costArray = []
-    batteryCapacity = current_user.battery
+    #Charger Capacity is 3.3kW
+    batteryCapacity = min(current_user.battery, 3.3)
     for i in range(len(powerRemaining)):
         # If Sufficient power is available to charge the vehicle
         if batteryCapacity <= powerRemaining[i]:
             cost = 3.4 * batteryCapacity
         else:
             cost = 3.4 * powerRemaining[i] + 6 * (batteryCapacity - powerRemaining[i])
-        costArray.append(round(cost,2))
+        costArray.append(round(cost,1))
     return costArray 
 
 

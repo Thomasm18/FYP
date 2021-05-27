@@ -24,20 +24,27 @@
     </thead>
     <tbody>
       {% for row in table %}
-      {% if row.available %}
-      <tr>
-        <td>{{ row.time }}</td>
-        <td>₹ {{ row.cost }}</td>
-        <td>₹ {{ row.saving }}</td>
-        <td><button type="button" class="btn btn-success" id="{{row.id}}">Book</button></td>
-      </tr> 
-      {% else %}
+      {% if not row.available %}
       <tr class="table-secondary">
         <td>{{ row.time }}</td>
         <td>{{ row.cost }}</td>
         <td>{{ row.saving }}</td>
         <td></td>
       </tr> 
+      {% elif row.minCost %}
+      <tr class="table-success">
+        <td>{{ row.time }}</td>
+        <td>₹ {{ row.cost }}</td>
+        <td>₹ {{ row.saving }}</td>
+        <td><button type="button" class="btn btn-success" id="{{row.id}}">Book</button></td>
+      </tr>
+      {% else %}
+      <tr>
+        <td>{{ row.time }}</td>
+        <td>₹ {{ row.cost }}</td>
+        <td>₹ {{ row.saving }}</td>
+        <td><button type="button" class="btn btn-success" id="{{row.id}}">Book</button></td>
+      </tr>
       {% endif %}
       {% endfor %}
     </tbody>
