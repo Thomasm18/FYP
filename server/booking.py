@@ -84,6 +84,7 @@ def checkSlots():
             table[i]['available'] = False
             table[i]['cost'] = 'N/A'
             table[i]['saving'] = 'N/A'
+            table[i]['minCost']= False
 
         elif costArray[i] == minCost:
             table[i]['available'] = True 
@@ -95,6 +96,7 @@ def checkSlots():
             table[i]['available'] = True 
             table[i]['cost']= costArray[i]
             table[i]['saving'] = round((current_user.battery*6.6) - costArray[i],2)
+            table[i]['minCost']= False
     return(table)
 
 
@@ -150,6 +152,6 @@ def bookSlots(id, chargeUntil):
     # Update Port Status
     ports_status = Booking.query.filter(and_(Booking.date == booking_date),(Booking.time == booking_time)).all()
     # If all for ports are booked, slot is full
-    if len(ports_status) >= 4:
+    if len(ports_status) >= 2:
         slots[id] = 0
     return(str(1))
